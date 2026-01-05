@@ -14,6 +14,8 @@ class Cart(models.Model):
     
     def get_total_price(self):
         return sum(item.get_cost() for item in self.items.all())
+    def get_total_items(self):
+        return sum(item.quantity for item in  self.items.all() )
     
     
 class CartItem(models.Model) :

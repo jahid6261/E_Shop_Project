@@ -40,10 +40,10 @@ INSTALLED_APPS = [
     'order',
     'users',
     'shop',
-    # 'allauth',
-    # 'allauth.account',
-    # 'allauth.socialaccount',
-    # 'allauth.socialaccount.providers.google'
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google'
 ]
 
 MIDDLEWARE = [
@@ -54,7 +54,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    # "allauth.account.middleware.AccountMiddleware",
+    "allauth.account.middleware.AccountMiddleware",
 ]
 
 ROOT_URLCONF = 'e_shop.urls'
@@ -70,6 +70,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'django.template.context_processors.request',
+                
             ],
         },
     },
@@ -136,6 +137,6 @@ LOGIN_REDIRECT_URL='/'
 LOGOUT_REDIRECT_URL='/'
 
 
-# SOCIALACCOUNT_LOGIN_ON_GET=True
-# ACCOUNT_SEESSION_REMEBER=True
-# ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION=True
+SOCIALACCOUNT_LOGIN_ON_GET=True
+ACCOUNT_SEESSION_REMEBER=True
+ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION=True   
