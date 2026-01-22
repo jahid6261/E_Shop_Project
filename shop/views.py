@@ -6,63 +6,57 @@ from shop.forms import RatingForm
 
 from order.models import Order,OrderItem
 
+from django.contrib.auth.decorators import login_required
 
-# home page
 
-def home(request):
-    featured_products = Product.objects.filter(available=True).order_by('-created_at')[:8] # descending order
+
+
+# product list page
+def product_list(request, category_slug = None):
+    category = None 
     categories = Category.objects.all()
-    
-    return render(request, 'shop/home.html', {'featured_products' : featured_products, 'categories' : categories})
-
-def product_list(request, category_slug=None):
-    categories = Category.objects.all()
-    products = Product.objects.all()
-    category = None
-    
+    products = Product.objects.filter(available=True)
     
     if category_slug:
-        category=get_object_or_404(category,category_slug)
-        products=products.filter(category=category)
+        category = get_object_or_404(Category, slug=category_slug)
+        print("category .......", category)
+        products = products.filter(category = category)
         
-        
-    min_price = products.aaggregate(Min("price"))['price__min']
-    max_price=products.aaggregate(Max('price'))['price__max']
+    min_price = products.aggregate(Min('price'))['price__min']
+    max_price = products.aggregate(Max('price'))['price__max']
     
     if request.GET.get('min_price'):
-        products=products.filter(price__gte=request.GET.get('min_price'))
-    if request.GET.get('max_price')    :
-        products=products.filter(price__gte=request.GET.get('max_price'))
-        
-        
-    if request.GET.get('rating'):
-     products=products.annotate(avg_rating=Avg("ratings__rating")).filter(
-         
-     avg_rating=request.GET.get("rating"
-     ))  
+        products = products.filter(price__gte=request.GET.get('min_price'))
     
-    if request.GET.get("search"):
-        queary=request.GET.get("search")
-        products=products.filter(
-            Q(name_icontains=queary)|
-            Q(description_icontains=queary)|
-            Q(category_name_icontains=queary)
-            
+    if request.GET.get('max_price'):
+        products = products.filter(price__lte=request.GET.get('max_price'))
+    
+    if request.GET.get('rating'):
+        min_rating = request.GET.get('rating')
+        products = products.annotate(avg_rating = Avg('ratings__rating')).filter(avg_rating__gte=min_rating)
+        # temp variable --> avg_rating
+        # Avg
+        # ratings related_name ke use kore rating model er rating value ke access korlam
+        # avg_rating == user er filter kora rating er sathe
+        
+    
+    if request.GET.get('search'):
+        query = request.GET.get('search')
+        products = products.filter(
+            Q(name__icontains = query) | 
+            Q(description__icontains = query) | 
+            Q(category__name__icontains = query)  
         )
-        
-    return render(request,'',{
-        'category': category,
-        'categories':categories,
-        'products':products,
-        'min_price':min_price,
-        'max_price':max_price
-        
-    })    
-        
-        
-# product detail page 
+    
+    return render(request, 'product_list.html', {
+        'category' : category,
+        'categories' : categories,
+        'products' : products,
+        'min_price' : min_price,
+        'max_price' : max_price
+    })
 
-
+# product detail page
 def product_detail(request, slug):
     product = get_object_or_404(Product, slug = slug, available = True)
     related_products = Product.objects.filter(category = product.category).exclude(id=product.id)
@@ -77,57 +71,49 @@ def product_detail(request, slug):
         
     rating_form = RatingForm(instance=user_rating)
     
-    return render(request, '', {
+    return render(request, 'product_detail.html', {
         'product' :product,
         'related_products' : related_products,
         'user_rating' : user_rating,
         'rating_form' : rating_form
     })
 
-
-
-
-# rate product
+# Rate Product 
+# logged in user, Purchase koreche kina
+@login_required
 def rate_product(request, product_id):
     product = get_object_or_404(Product, id=product_id)
-
+    
     ordered_items = OrderItem.objects.filter(
-        order__user=request.user,
-        product=product,
-        order__paid=True
+        order__user = request.user,
+        product = product,
+        order__paid = True
     )
-
-    if not ordered_items.exists():
-        messages.warning(
-            request,
-            "You can only rate products you have purchased"
-        )
+    
+    if not ordered_items.exists(): # order kore nai
+        messages.warning(request, 'You can only rate products you have purchased!')
         return redirect('product_detail', slug=product.slug)
-
-    rating = Rating.objects.filter(
-        product=product,
-        user=request.user
-    ).first()
-
-    if request.method == "POST":
-        form = RatingForm(request.POST, instance=rating)
+    
+    try:
+        rating = Rating.objects.get(product=product, user = request.user)
+    except Rating.DoesNotExist:
+        rating = None 
+    
+    # jodi rating age diye thake tail rating form ager rating data diye fill up kora thakbe sekhtre instance = user rating hoye jbe
+    # jodi rating na kora thake taile instance = None thakbe and se new rating create korte parbe
+    if request.method == 'POST':
+        form = RatingForm(request.POST, instance = rating) 
         if form.is_valid():
             rating = form.save(commit=False)
             rating.product = product
-            rating.user = request.user
+            rating.user = request.user 
             rating.save()
             return redirect('product_detail', slug=product.slug)
-
     else:
         form = RatingForm(instance=rating)
-
-    return render(
-        request,
-        '',
-        {
-            'form': form,
-            'product': product
-        }
-    )
-
+    
+    return render(request, 'rate_product.html', {
+        'form' : form,
+        'product' : product
+    })
     

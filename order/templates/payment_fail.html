@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block title %}Payment Failed | E-Shop{% endblock %}
+
+{% block content %}
+<div class="flex justify-center py-20">
+    <div class="bg-white shadow-lg rounded-lg p-10 text-center w-full max-w-lg">
+        <div class="mb-6">
+            <svg class="w-20 h-20 text-red-500 mx-auto mb-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm-2.707-9.707a1 1 0 011.414 0L10 9.586l1.293-1.293a1 1 0 111.414 1.414L11.414 11l1.293 1.293a1 1 0 01-1.414 1.414L10 12.414l-1.293 1.293a1 1 0 01-1.414-1.414L8.586 11 7.293 9.707z" clip-rule="evenodd"></path>
+            </svg>
+        </div>
+        <h1 class="text-3xl font-bold mb-3">Payment Failed</h1>
+        <p class="text-gray-700 mb-6">We couldn't process your payment. Please try again or use a different payment method.</p>
+        <div class="flex flex-col gap-3 sm:flex-row sm:justify-center">
+            <a href="{% url 'checkout' %}" class="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition">Try Again</a>
+            <a href="{% url 'cart_detail' %}" class="px-6 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-100 transition">Back to Cart</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

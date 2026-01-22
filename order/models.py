@@ -43,7 +43,7 @@ class Order(models.Model):
                                 related_name='orders')
         first_name=models.CharField(max_length=100)
         last_name=models.CharField(max_length=100)
-        email_name=models.EmailField(max_length=100)     
+        email=models.EmailField(max_length=100)     
         address=models.TextField(max_length=100)
         postal_code=models.CharField(max_length=100)
         city=models.CharField(max_length=100) 
@@ -52,13 +52,13 @@ class Order(models.Model):
         transaction_id=models.CharField(max_length=100)
         created_at=models.DateTimeField(auto_now_add=True)
         updated_at=models.DateTimeField(auto_now=True)
-        statud=models.CharField(max_length=10,choices=STATUS)
+        status=models.CharField(max_length=10,choices=STATUS)
         
         
         def __str__(self):
          return f"order #{self.id}"    
         def get_total_cost(self):
-            return sum(item.get_cost() for item in self.items.all())
+            return sum(item.get_cost() for item in self.order_items.all())
     
         
 class OrderItem(models.Model):

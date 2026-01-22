@@ -1,0 +1,204 @@
+{% load static %}
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}E-Commerce Store{% endblock %}</title>
+    <!-- Tailwind CSS CDN -->
+    <!-- <script src="https://cdn.tailwindcss.com"></script> -->
+     <link href="{% static 'css/output.css' %}" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    {% load static %}
+    {% block extra_css %}{% endblock %}
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+        /* Custom colors */
+        :root {
+            --primary-color: #6a11cb;
+            --primary-dark: #5a0cb8;
+            --primary-light: #7c4ddb;
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen text-gray-800 bg-gray-50">
+
+    <!-- Navbar -->
+    <header class="bg-white shadow">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-between h-16">
+                <a href="{% url 'home' %}" class="text-2xl font-bold text-purple-600">E-Shop</a>
+
+                <!-- Mobile menu button -->
+                <div class="lg:hidden">
+                    <button id="menu-btn" class="text-gray-600 focus:outline-none">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                </div>
+
+                <!-- Nav links -->
+                <div class="hidden lg:flex lg:items-center lg:space-x-6">
+                    <ul class="flex space-x-4">
+                        <li class="{% if request.path == '/' %}text-purple-600{% endif %}">
+                            <a href="{% url 'home' %}" class="font-medium hover:text-purple-600">Home</a>
+                        </li>
+                        <li class="{% if '/products/' in request.path %}text-purple-600{% endif %}">
+                            <a href="{% url 'product_list' %}" class="font-medium hover:text-purple-600">Products</a>
+                        </li>
+                    </ul>
+
+                    <!-- Search -->
+                    <form class="flex ml-4" action="{% url 'product_list' %}" method="get">
+                        <input type="search" name="search" placeholder="Search products..." 
+                               class="rounded-full border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-300">
+                        <button type="submit" class="ml-2 rounded-full bg-purple-600 hover:bg-purple-700 text-white px-4 py-2">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Right buttons -->
+                <div class="hidden lg:flex lg:items-center lg:space-x-4">
+                    <a href="{% url 'cart_detail' %}" class="relative text-gray-800 hover:text-purple-600">
+                        <i class="fas fa-shopping-cart text-lg"></i> Cart
+                        {% if cart_items_count %}
+                            <span class="absolute -top-1 -right-2 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-purple-600 rounded-full">{{ cart_items_count }}</span>
+                        {% endif %}
+                    </a>
+
+                    {% if user.is_authenticated %}
+                        <div class="relative group">
+                            <button class="flex items-center space-x-1 focus:outline-none">
+                                <i class="fas fa-user-circle text-lg"></i>
+                                <span>{{ user.username }}</span>
+                                <i class="fas fa-chevron-down text-sm"></i>
+                            </button>
+                            <ul class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-50">
+                                <li>
+                                    <a href="{% url 'profile' %}" class="block px-4 py-2 text-gray-800 hover:bg-purple-100">
+                                        <i class="fas fa-user me-2"></i> My Profile
+                                    </a>
+                                </li>
+                                <li><hr class="border-gray-200"></li>
+                                <li>
+                                    <a href="{% url 'logout' %}" class="block px-4 py-2 text-gray-800 hover:bg-purple-100">
+                                        <i class="fas fa-sign-out-alt me-2"></i> Logout
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    {% else %}
+                        <a href="{% url 'login' %}" class="px-4 py-2 border border-purple-600 text-purple-600 rounded-full hover:bg-purple-600 hover:text-white transition">
+                            <i class="fas fa-sign-in-alt me-1"></i> Login
+                        </a>
+                        <a href="{% url 'register' %}" class="px-4 py-2 bg-purple-600 text-white rounded-full hover:bg-purple-700 transition">
+                            <i class="fas fa-user-plus me-1"></i> Register
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Mobile menu -->
+            <div id="mobile-menu" class="hidden lg:hidden mt-4">
+                <ul class="space-y-2">
+                    <li><a href="{% url 'home' %}" class="block py-2 px-4 hover:bg-purple-100 rounded">Home</a></li>
+                    <li><a href="{% url 'product_list' %}" class="block py-2 px-4 hover:bg-purple-100 rounded">Products</a></li>
+                    {% if user.is_authenticated %}
+                        <li><a href="{% url 'profile' %}" class="block py-2 px-4 hover:bg-purple-100 rounded">My Profile</a></li>
+                        <li><a href="{% url 'logout' %}" class="block py-2 px-4 hover:bg-purple-100 rounded">Logout</a></li>
+                    {% else %}
+                        <li><a href="{% url 'login' %}" class="block py-2 px-4 hover:bg-purple-100 rounded">Login</a></li>
+                        <li><a href="{% url 'register' %}" class="block py-2 px-4 hover:bg-purple-100 rounded">Register</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main content -->
+    <main class="flex-1 container mx-auto px-4 py-6">
+        {% if messages %}
+            <div class="mb-6 space-y-3">
+                {% for message in messages %}
+                    <div class="flex items-center justify-between px-4 py-3 rounded-lg shadow
+                        {% if message.tags == 'success' %}bg-green-100 text-green-700{% endif %}
+                        {% if message.tags == 'info' %}bg-blue-100 text-blue-700{% endif %}
+                        {% if message.tags == 'warning' %}bg-yellow-100 text-yellow-700{% endif %}
+                        {% if message.tags == 'error' %}bg-red-100 text-red-700{% endif %}">
+                        <div class="flex items-center space-x-2">
+                            {% if message.tags == 'success' %}
+                                <i class="fas fa-check-circle"></i>
+                            {% elif message.tags == 'info' %}
+                                <i class="fas fa-info-circle"></i>
+                            {% elif message.tags == 'warning' %}
+                                <i class="fas fa-exclamation-triangle"></i>
+                            {% elif message.tags == 'error' %}
+                                <i class="fas fa-times-circle"></i>
+                            {% endif %}
+                            <span>{{ message }}</span>
+                        </div>
+                        <button type="button" onclick="this.parentElement.remove()" class="text-gray-500 hover:text-gray-700">&times;</button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-100 mt-12 py-12">
+        <div class="container mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div>
+                <h5 class="text-purple-600 font-semibold mb-3">About Us</h5>
+                <p>We provide high-quality products at affordable prices. Our mission is to make online shopping easy, secure, and enjoyable.</p>
+            </div>
+            <div>
+                <h5 class="text-purple-600 font-semibold mb-3">Contact</h5>
+                <p class="space-y-2">
+                    <span><i class="fas fa-envelope me-2 text-purple-600"></i> contact@eshop.com</span><br>
+                    <span><i class="fas fa-phone me-2 text-purple-600"></i> +8801741006261</span><br>
+                    <span><i class="fas fa-map-marker-alt me-2 text-purple-600"></i> 123 E-Commerce St, Digital City</span>
+                </p>
+            </div>
+            <div>
+                <h5 class="text-purple-600 font-semibold mb-3">Stay Connected</h5>
+                <div class="flex mb-3 space-x-3">
+                    <a href="#" class="w-9 h-9 flex items-center justify-center rounded-full bg-gray-200 text-purple-600 hover:bg-purple-600 hover:text-white transition"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="w-9 h-9 flex items-center justify-center rounded-full bg-gray-200 text-purple-600 hover:bg-purple-600 hover:text-white transition"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="w-9 h-9 flex items-center justify-center rounded-full bg-gray-200 text-purple-600 hover:bg-purple-600 hover:text-white transition"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="w-9 h-9 flex items-center justify-center rounded-full bg-gray-200 text-purple-600 hover:bg-purple-600 hover:text-white transition"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+                <p>Subscribe to our newsletter for updates on new arrivals and special offers.</p>
+            </div>
+        </div>
+        <hr class="my-6 border-gray-300">
+        <div class="container mx-auto px-4 flex flex-col md:flex-row justify-between text-gray-500">
+            <p>&copy; {% now "Y" %} E-Shop. All rights reserved.</p>
+            <div class="space-x-4 mt-2 md:mt-0">
+                <a href="#" class="hover:underline">Privacy Policy</a>
+                <a href="#" class="hover:underline">Terms of Service</a>
+                <a href="#" class="hover:underline">FAQ</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Tailwind script for mobile menu -->
+    <script>
+        const btn = document.getElementById('menu-btn');
+        const menu = document.getElementById('mobile-menu');
+        btn.addEventListener('click', () => {
+            menu.classList.toggle('hidden');
+        });
+    </script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

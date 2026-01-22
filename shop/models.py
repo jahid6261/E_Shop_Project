@@ -23,7 +23,7 @@ class Product(models.Model):
     
     name=models.CharField(max_length=100)
     slug=models.SlugField(max_length=250,unique=True)
-    Category=models.ForeignKey(Category,on_delete=models.CASCADE,
+    category=models.ForeignKey(Category,on_delete=models.CASCADE,
     related_name="products") 
     description=models.TextField()
     price=models.DecimalField(max_digits=10,decimal_places=2)   
@@ -43,7 +43,7 @@ class Product(models.Model):
         if ratings.count() > 0:
             return sum([i.ratting for i in ratings ])/ratings.count()
 class Rating(models.Model):
-    Product=models.ForeignKey(Product,on_delete=models.CASCADE,
+    product=models.ForeignKey(Product,on_delete=models.CASCADE,
     related_name='ratings')   
     
     user = models.ForeignKey(User,on_delete=models.CASCADE)

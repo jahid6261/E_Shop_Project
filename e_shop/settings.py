@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 from pathlib import Path
+from decouple import config
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -40,6 +42,7 @@ INSTALLED_APPS = [
     'order',
     'users',
     'shop',
+    'core',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
@@ -70,7 +73,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'django.template.context_processors.request',
-                
+                 'order.context_processors.cart_items_count'                
             ],
         },
     },
@@ -109,6 +112,12 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+] 
+
+
 # Internationalization
 # https://docs.djangoproject.com/en/6.0/topics/i18n/
 
@@ -124,19 +133,37 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
-STATIC_URL = 'static/'
-STATICFILES_DIRS = ['static']
+STATIC_URL = '/static/'
+STATICFILES_DIRS = [BASE_DIR / "static"]
+
+
 MEDIA_URL= '/media/'
 MEDIA_ROOT='media'
 
 
 # Login_URL
 
-LOGIN_URL= ''
-LOGIN_REDIRECT_URL='/'
-LOGOUT_REDIRECT_URL='/'
+LOGIN_URL = '/users/login/'   
+LOGIN_REDIRECT_URL = '/home/' 
+LOGOUT_REDIRECT_URL = '/'
 
 
 SOCIALACCOUNT_LOGIN_ON_GET=True
 ACCOUNT_SEESSION_REMEBER=True
 ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION=True   
+
+
+
+SSLCOMMERZ_STORE_ID='eshop6959dbe335f61'
+SSLCOMMERZ_STORE_PASSWORD='eshop6959dbe335f61@ssl'
+SSLCOMMERZ_PAYMENT_URL='https://sandbox.sslcommerz.com/gwprocess/v3/api.php'
+SSLCOMMERZ_VALIDATION_URL='https://sandbox.sslcommerz.com/validator/api/validationserverAPI.php?wsdl'
+
+
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = config('EMAIL_HOST')
+EMAIL_USE_TLS = config('EMAIL_USE_TLS', cast=bool)
+EMAIL_PORT = config('EMAIL_PORT')
+EMAIL_HOST_USER = config('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
