@@ -154,10 +154,7 @@ ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION=True
 
 
 
-SSLCOMMERZ_STORE_ID='eshop6959dbe335f61'
-SSLCOMMERZ_STORE_PASSWORD='eshop6959dbe335f61@ssl'
-SSLCOMMERZ_PAYMENT_URL='https://sandbox.sslcommerz.com/gwprocess/v3/api.php'
-SSLCOMMERZ_VALIDATION_URL='https://sandbox.sslcommerz.com/validator/api/validationserverAPI.php?wsdl'
+
 
 
 
