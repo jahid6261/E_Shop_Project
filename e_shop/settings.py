@@ -27,7 +27,8 @@ SECRET_KEY = 'django-insecure-=!c7mb5w6-g5vl=g+ywse%rx8yktu=wr1&5+f=msp9u4gmciqt
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
+CSRF_TRUSTED_ORIGINS=['https://*.onrender.com','http://127.0.0.1:8000']
 
 
 # Application definition
@@ -154,15 +155,14 @@ ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION=True
 
 
 
-<<<<<<< HEAD
+
 SSLCOMMERZ_STORE_ID = config('SSLCOMMERZ_STORE_ID')
 SSLCOMMERZ_STORE_PASSWORD = config('SSLCOMMERZ_STORE_PASSWORD')
 SSLCOMMERZ_PAYMENT_URL = config('SSLCOMMERZ_PAYMENT_URL')
 SSLCOMMERZ_VALIDATION_URL = config('SSLCOMMERZ_VALIDATION_URL')
-=======
 
 
->>>>>>> 7f0371203edc5d991e387b8b429f0ac03e25643b
+
 
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
