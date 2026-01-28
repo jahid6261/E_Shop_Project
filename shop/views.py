@@ -11,7 +11,7 @@ from django.contrib.auth.decorators import login_required
 
 
 
-# product list page
+#product list page
 def product_list(request, category_slug = None):
     category = None 
     categories = Category.objects.all()
@@ -34,11 +34,7 @@ def product_list(request, category_slug = None):
     if request.GET.get('rating'):
         min_rating = request.GET.get('rating')
         products = products.annotate(avg_rating = Avg('ratings__rating')).filter(avg_rating__gte=min_rating)
-        # temp variable --> avg_rating
-        # Avg
-        # ratings related_name ke use kore rating model er rating value ke access korlam
-        # avg_rating == user er filter kora rating er sathe
-        
+
     
     if request.GET.get('search'):
         query = request.GET.get('search')
@@ -55,6 +51,8 @@ def product_list(request, category_slug = None):
         'min_price' : min_price,
         'max_price' : max_price
     })
+
+
 
 # product detail page
 def product_detail(request, slug):
@@ -99,8 +97,6 @@ def rate_product(request, product_id):
     except Rating.DoesNotExist:
         rating = None 
     
-    # jodi rating age diye thake tail rating form ager rating data diye fill up kora thakbe sekhtre instance = user rating hoye jbe
-    # jodi rating na kora thake taile instance = None thakbe and se new rating create korte parbe
     if request.method == 'POST':
         form = RatingForm(request.POST, instance = rating) 
         if form.is_valid():

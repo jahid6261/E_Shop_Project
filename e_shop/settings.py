@@ -154,11 +154,10 @@ ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION=True
 
 
 
-SSLCOMMERZ_STORE_ID='eshop6959dbe335f61'
-SSLCOMMERZ_STORE_PASSWORD='eshop6959dbe335f61@ssl'
-SSLCOMMERZ_PAYMENT_URL='https://sandbox.sslcommerz.com/gwprocess/v3/api.php'
-SSLCOMMERZ_VALIDATION_URL='https://sandbox.sslcommerz.com/validator/api/validationserverAPI.php?wsdl'
-
+SSLCOMMERZ_STORE_ID = config('SSLCOMMERZ_STORE_ID')
+SSLCOMMERZ_STORE_PASSWORD = config('SSLCOMMERZ_STORE_PASSWORD')
+SSLCOMMERZ_PAYMENT_URL = config('SSLCOMMERZ_PAYMENT_URL')
+SSLCOMMERZ_VALIDATION_URL = config('SSLCOMMERZ_VALIDATION_URL')
 
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'

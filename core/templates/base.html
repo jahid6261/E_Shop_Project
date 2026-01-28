@@ -7,8 +7,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}E-Commerce Store{% endblock %}</title>
-    <!-- Tailwind CSS CDN -->
-    <!-- <script src="https://cdn.tailwindcss.com"></script> -->
+
      <link href="{% static 'css/output.css' %}" rel="stylesheet">
 
     <!-- Font Awesome -->
@@ -32,96 +31,118 @@
 <body class="flex flex-col min-h-screen text-gray-800 bg-gray-50">
 
     <!-- Navbar -->
-    <header class="bg-white shadow">
-        <div class="container mx-auto px-4">
-            <div class="flex items-center justify-between h-16">
-                <a href="{% url 'home' %}" class="text-2xl font-bold text-purple-600">E-Shop</a>
 
-                <!-- Mobile menu button -->
-                <div class="lg:hidden">
-                    <button id="menu-btn" class="text-gray-600 focus:outline-none">
-                        <i class="fas fa-bars text-xl"></i>
-                    </button>
-                </div>
+<header class="bg-white shadow">
+    <div class="container mx-auto px-4">
+        <div class="flex items-center justify-between h-16">
+            <a href="{% url 'home' %}" class="text-2xl font-bold text-purple-600">E-Shop</a>
 
-                <!-- Nav links -->
-                <div class="hidden lg:flex lg:items-center lg:space-x-6">
-                    <ul class="flex space-x-4">
-                        <li class="{% if request.path == '/' %}text-purple-600{% endif %}">
-                            <a href="{% url 'home' %}" class="font-medium hover:text-purple-600">Home</a>
-                        </li>
-                        <li class="{% if '/products/' in request.path %}text-purple-600{% endif %}">
-                            <a href="{% url 'product_list' %}" class="font-medium hover:text-purple-600">Products</a>
-                        </li>
-                    </ul>
-
-                    <!-- Search -->
-                    <form class="flex ml-4" action="{% url 'product_list' %}" method="get">
-                        <input type="search" name="search" placeholder="Search products..." 
-                               class="rounded-full border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-300">
-                        <button type="submit" class="ml-2 rounded-full bg-purple-600 hover:bg-purple-700 text-white px-4 py-2">
-                            <i class="fas fa-search"></i>
-                        </button>
-                    </form>
-                </div>
-
-                <!-- Right buttons -->
-                <div class="hidden lg:flex lg:items-center lg:space-x-4">
-                    <a href="{% url 'cart_detail' %}" class="relative text-gray-800 hover:text-purple-600">
-                        <i class="fas fa-shopping-cart text-lg"></i> Cart
-                        {% if cart_items_count %}
-                            <span class="absolute -top-1 -right-2 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-purple-600 rounded-full">{{ cart_items_count }}</span>
-                        {% endif %}
-                    </a>
-
-                    {% if user.is_authenticated %}
-                        <div class="relative group">
-                            <button class="flex items-center space-x-1 focus:outline-none">
-                                <i class="fas fa-user-circle text-lg"></i>
-                                <span>{{ user.username }}</span>
-                                <i class="fas fa-chevron-down text-sm"></i>
-                            </button>
-                            <ul class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-50">
-                                <li>
-                                    <a href="{% url 'profile' %}" class="block px-4 py-2 text-gray-800 hover:bg-purple-100">
-                                        <i class="fas fa-user me-2"></i> My Profile
-                                    </a>
-                                </li>
-                                <li><hr class="border-gray-200"></li>
-                                <li>
-                                    <a href="{% url 'logout' %}" class="block px-4 py-2 text-gray-800 hover:bg-purple-100">
-                                        <i class="fas fa-sign-out-alt me-2"></i> Logout
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                    {% else %}
-                        <a href="{% url 'login' %}" class="px-4 py-2 border border-purple-600 text-purple-600 rounded-full hover:bg-purple-600 hover:text-white transition">
-                            <i class="fas fa-sign-in-alt me-1"></i> Login
-                        </a>
-                        <a href="{% url 'register' %}" class="px-4 py-2 bg-purple-600 text-white rounded-full hover:bg-purple-700 transition">
-                            <i class="fas fa-user-plus me-1"></i> Register
-                        </a>
-                    {% endif %}
-                </div>
+            <!-- Mobile menu button -->
+            <div class="lg:hidden">
+                <button id="menu-btn" class="text-gray-600 focus:outline-none">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
             </div>
 
-            <!-- Mobile menu -->
-            <div id="mobile-menu" class="hidden lg:hidden mt-4">
-                <ul class="space-y-2">
-                    <li><a href="{% url 'home' %}" class="block py-2 px-4 hover:bg-purple-100 rounded">Home</a></li>
-                    <li><a href="{% url 'product_list' %}" class="block py-2 px-4 hover:bg-purple-100 rounded">Products</a></li>
-                    {% if user.is_authenticated %}
-                        <li><a href="{% url 'profile' %}" class="block py-2 px-4 hover:bg-purple-100 rounded">My Profile</a></li>
-                        <li><a href="{% url 'logout' %}" class="block py-2 px-4 hover:bg-purple-100 rounded">Logout</a></li>
-                    {% else %}
-                        <li><a href="{% url 'login' %}" class="block py-2 px-4 hover:bg-purple-100 rounded">Login</a></li>
-                        <li><a href="{% url 'register' %}" class="block py-2 px-4 hover:bg-purple-100 rounded">Register</a></li>
-                    {% endif %}
+            <!-- Desktop nav links + search + cart + user -->
+            <div class="hidden lg:flex lg:items-center lg:space-x-6">
+                <ul class="flex space-x-4">
+                    <li class="{% if request.path == '/' %}text-purple-600{% endif %}">
+                        <a href="{% url 'home' %}" class="font-medium hover:text-purple-600">Home</a>
+                    </li>
+                    <li class="{% if '/products/' in request.path %}text-purple-600{% endif %}">
+                        <a href="{% url 'product_list' %}" class="font-medium hover:text-purple-600">Products</a>
+                    </li>
                 </ul>
+
+                <!-- Search -->
+                <form class="flex ml-4" action="{% url 'product_list' %}" method="get">
+                    <input type="search" name="search" placeholder="Search products..." 
+                           class="rounded-full border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-300">
+                    <button type="submit" class="ml-2 rounded-full bg-purple-600 hover:bg-purple-700 text-white px-4 py-2">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </form>
+
+                <!-- Cart -->
+                <a href="{% url 'cart_detail' %}" class="relative ml-4 text-gray-800 hover:text-purple-600">
+                    <i class="fas fa-shopping-cart text-lg"></i> Cart
+                    {% if cart_items_count %}
+                        <span class="absolute -top-1 -right-2 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-purple-600 rounded-full">{{ cart_items_count }}</span>
+                    {% endif %}
+                </a>
+
+                <!-- User dropdown -->
+                {% if user.is_authenticated %}
+                    <div class="relative group ml-4">
+                        <button class="flex items-center space-x-1 focus:outline-none">
+                            <i class="fas fa-user-circle text-lg"></i>
+                            <span>{{ user.username }}</span>
+                            <i class="fas fa-chevron-down text-sm"></i>
+                        </button>
+                        <ul class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-50">
+                            <li>
+                                <a href="{% url 'profile' %}" class="block px-4 py-2 text-gray-800 hover:bg-purple-100">
+                                    <i class="fas fa-user me-2"></i> My Profile
+                                </a>
+                            </li>
+                            <li><hr class="border-gray-200"></li>
+                            <li>
+                                <a href="{% url 'logout' %}" class="block px-4 py-2 text-gray-800 hover:bg-purple-100">
+                                    <i class="fas fa-sign-out-alt me-2"></i> Logout
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                {% else %}
+                    <a href="{% url 'login' %}" class="px-4 py-2 border border-purple-600 text-purple-600 rounded-full hover:bg-purple-600 hover:text-white transition ml-4">
+                        <i class="fas fa-sign-in-alt me-1"></i> Login
+                    </a>
+                    <a href="{% url 'register' %}" class="px-4 py-2 bg-purple-600 text-white rounded-full hover:bg-purple-700 transition ml-2">
+                        <i class="fas fa-user-plus me-1"></i> Register
+                    </a>
+                {% endif %}
             </div>
         </div>
-    </header>
+
+        <!-- Mobile menu -->
+        <div id="mobile-menu" class="hidden lg:hidden mt-4 space-y-3">
+            <!-- Search -->
+            <form action="{% url 'product_list' %}" method="get" class="flex">
+                <input type="search" name="search" placeholder="Search products..." 
+                       class="flex-1 rounded-full border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-300">
+                <button type="submit" class="ml-2 rounded-full bg-purple-600 hover:bg-purple-700 text-white px-4 py-2">
+                    <i class="fas fa-search"></i>
+                </button>
+            </form>
+
+            <!-- Links -->
+            <ul class="space-y-2">
+                <li><a href="{% url 'home' %}" class="block py-2 px-4 hover:bg-purple-100 rounded">Home</a></li>
+                <li><a href="{% url 'product_list' %}" class="block py-2 px-4 hover:bg-purple-100 rounded">Products</a></li>
+
+                <!-- Cart -->
+                <li>
+                    <a href="{% url 'cart_detail' %}" class="block py-2 px-4 hover:bg-purple-100 rounded relative">
+                        Cart
+                        {% if cart_items_count %}
+                            <span class="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-purple-600 rounded-full">{{ cart_items_count }}</span>
+                        {% endif %}
+                    </a>
+                </li>
+
+                {% if user.is_authenticated %}
+                    <li><a href="{% url 'profile' %}" class="block py-2 px-4 hover:bg-purple-100 rounded">My Profile</a></li>
+                    <li><a href="{% url 'logout' %}" class="block py-2 px-4 hover:bg-purple-100 rounded">Logout</a></li>
+                {% else %}
+                    <li><a href="{% url 'login' %}" class="block py-2 px-4 hover:bg-purple-100 rounded">Login</a></li>
+                    <li><a href="{% url 'register' %}" class="block py-2 px-4 hover:bg-purple-100 rounded">Register</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</header>
+
 
     <!-- Main content -->
     <main class="flex-1 container mx-auto px-4 py-6">

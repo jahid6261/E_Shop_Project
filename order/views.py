@@ -19,11 +19,9 @@ from django.views.decorators.csrf import csrf_exempt
 
 
 
-
 @login_required
 def cart_detail(request):
-    # user er kono cart nai
-    # user er cart ache
+   
     try:
         cart = Cart.objects.get(user=request.user)
     except Cart.DoesNotExist:
@@ -31,49 +29,35 @@ def cart_detail(request):
     
     return render(request, 'cart.html', {'cart' : cart})
 
-
 # cart add
 @login_required
 def cart_add(request, product_id):
     product = get_object_or_404(Product, id=product_id)
 
-    # User er cart ache kina
-    
-    # Exception handling
-    # jodi thake taile oi cart ta check korbo
-    try: # ekahne error aste pare
+    try: 
         cart = Cart.objects.get(user=request.user)
-    
-    # jodi na thake, taile cart ekta banabo
+
     except Cart.DoesNotExist:
         cart = Cart.objects.create(user=request.user)
     
-    # Cart e item add korbo
-    # item already cart e ache
+
     try:
         cart_item = CartItem.objects.get(cart=cart, product=product)
         cart_item.quantity += 1
         cart_item.save()
         
-    # item cart e nai
+
     except CartItem.DoesNotExist:
         CartItem.objects.create(cart=cart, product=product, quantity = 1)
     
     messages.success(request, f"{product.name} has been added to your cart!")
     return redirect('product_detail', slug=product.slug)
+    
 
 
-
-
-
-
-# cart Update
-# cart item quantity increase/decrease korte parbo
 @login_required
 def cart_update(request, product_id):
-    # cart konta
-    # cart er item konta
-    # main product jeta cart item hisebe cart e ache
+ 
     
     cart = get_object_or_404(Cart, user=request.user)
     product = get_object_or_404(Product, id=product_id)
@@ -81,9 +65,7 @@ def cart_update(request, product_id):
     
     quantity = int(request.POST.get('quantity', 1))
     
-    # Keya saban -> stock e ache 20 ta product
-    # user Keya saban -> 40 ta add to cart korche..
-    # user Keya saban -> 5, 4, 3, 2, 1, 0 --> cartitem delete kore deoya lagbe
+
     
     if quantity <= 0:
         cart_item.delete()
@@ -93,11 +75,6 @@ def cart_update(request, product_id):
         cart_item.save()
         messages.success(request, f"Cart updated successfully!!")
     return redirect('cart_detail')
-
-
-
-
-
 
 @login_required
 def cart_remove(request, product_id):
@@ -111,14 +88,8 @@ def cart_remove(request, product_id):
 
 
 
-
-    
-
-
-
-
-
-#@csrf_exempt # --> payment related kaj gula jeno secure thake setar jonne  
+# Product --> Cart Item --> Order Item
+@csrf_exempt 
 @login_required
 def checkout(request):
     try:
@@ -130,24 +101,24 @@ def checkout(request):
         messages.warning(request, 'Your cart is empty!')
         return redirect('cart_detail')
     
-    # Checkout form ta fill up korbe
+    
     if request.method == 'POST':
         form = CheckoutForm(request.POST)
         if form.is_valid():
-            order = form.save(commit=False) # form object create hobe kintu data database e jabe na
+            order = form.save(commit=False) 
             order.user = request.user 
-            order.save() # order kora hoye geche
+            order.phone = form.cleaned_data['phone']
+            order.save() 
 
             for item in cart.items.all():
                 OrderItem.objects.create(
                     order = order,
-                    product = item.product, # cartitem e ekhn order item
-                    price = item.product.price, # product er main price e order item er main price
-                    quantity = item.quantity # cart item er quantity e hocche order item er quantity
+                    product = item.product, 
+                    price = item.product.price, 
+                    quantity = item.quantity 
                 )
-            #  order kora done finally
-            # cart er ar kono value e nai
-            cart.items.all().delete() # cart er item gula delete kore dilam 
+      
+            
             request.session['order_id'] = order.id 
             return redirect('payment_process')
     else:
@@ -157,15 +128,21 @@ def checkout(request):
         'form' : form
     })
 
-# 1. Payment Success
+
+
+    
+
+
+
+
+
+
+
 @csrf_exempt
 
 def payment_success(request, order_id):
     order = get_object_or_404(Order, id= order_id)
-    # order ta paid
-    # order er status --> processing
-    # product er stock komiye dibo
-    # transaction id
+    
     order.paid = True 
     order.status = 'processing'
     order.transaction_id = order.id 
@@ -175,20 +152,21 @@ def payment_success(request, order_id):
         product = item.product
         product.stock -= item.quantity
         
-        # 40 - 60 = -20
+   
         if product.stock < 0:
             product.stock = 0
         product.save()
     
-    # send confirmation email
+ 
     send_order_confirmation_email(order)
     
     messages.success(request, 'Payment successful')
     return render(request, 'payment_success.html', {'order' : order})
 
+
 @csrf_exempt
 def payment_process(request):
-    # session 
+
     order_id = request.session.get('order_id')
     if not order_id:
         return redirect('home')
@@ -196,12 +174,14 @@ def payment_process(request):
     order = get_object_or_404(Order, id=order_id)
     payment_data = generate_sslcommerz_payment(request, order)
     
-    if payment_data['status'] == 'SUCCESS':
+ 
+    if payment_data.get('status') == 'SUCCESS' and payment_data.get('GatewayPageURL'):
         return redirect(payment_data['GatewayPageURL'])
     else:
+        print("Payment Data:", payment_data)  
         messages.error(request, 'Payment gateway error. Please Try again.')
         return redirect('checkout')
-        
+
 
 
 @csrf_exempt

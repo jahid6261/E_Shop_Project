@@ -15,7 +15,7 @@
             </a>
         </div>
         <div class="lg:w-5/12 hidden lg:block">
-            <img src="{% static 'welcome.jpg' %}" alt="Welcome" class="rounded-xl shadow-lg w-full h-auto object-cover">
+            <img src="{% static 'images/shop.jpg' %}" alt="Welcome" class="rounded-xl shadow-lg w-full h-auto object-cover">
         </div>
     </div>
 </section>
@@ -41,6 +41,30 @@
         <div class="text-purple-700 text-4xl mb-3"><i class="fas fa-headset"></i></div>
         <h3 class="font-semibold text-xl mb-1">24/7 Support</h3>
         <p class="text-gray-600">Dedicated customer service</p>
+    </div>
+</section>
+
+
+
+<!-- Categories -->
+<section class="container mx-auto mb-16">
+    <div class="text-center mb-12">
+        <h2 class="text-3xl font-bold mb-2">Shop by Category</h2>
+        <p class="text-gray-600">Explore our wide range of product categories</p>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for category in categories %}
+        <div class="bg-white rounded-xl shadow-md p-6 text-center transform transition hover:-translate-y-1 hover:shadow-xl">
+            <div class="text-4xl text-purple-700 mb-3">
+                <i class="fas fa-{% if forloop.counter == 1 %}tshirt{% elif forloop.counter == 2 %}laptop{% elif forloop.counter == 3 %}mobile-alt{% elif forloop.counter == 4 %}home{% elif forloop.counter == 5 %}shoe-prints{% else %}tag{% endif %}"></i>
+            </div>
+            <h3 class="font-semibold text-xl mb-1">{{ category.name }}</h3>
+            <p class="text-gray-600 mb-3 line-clamp-3">{{ category.description|truncatechars:100 }}</p>
+            <a href="{% url 'product_list_by_category' category.slug %}" class="inline-block bg-gray-100 text-purple-700 py-2 px-6 rounded-full font-semibold hover:bg-purple-700 hover:text-white transition">Browse {{ category.name }}</a>
+        </div>
+        {% empty %}
+        <div class="col-span-full text-center text-gray-500">No categories available at the moment.</div>
+        {% endfor %}
     </div>
 </section>
 
@@ -94,25 +118,5 @@
     </div>
 </section>
 
-<!-- Categories -->
-<section class="container mx-auto mb-16">
-    <div class="text-center mb-12">
-        <h2 class="text-3xl font-bold mb-2">Shop by Category</h2>
-        <p class="text-gray-600">Explore our wide range of product categories</p>
-    </div>
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {% for category in categories %}
-        <div class="bg-white rounded-xl shadow-md p-6 text-center transform transition hover:-translate-y-1 hover:shadow-xl">
-            <div class="text-4xl text-purple-700 mb-3">
-                <i class="fas fa-{% if forloop.counter == 1 %}tshirt{% elif forloop.counter == 2 %}laptop{% elif forloop.counter == 3 %}mobile-alt{% elif forloop.counter == 4 %}home{% elif forloop.counter == 5 %}shoe-prints{% else %}tag{% endif %}"></i>
-            </div>
-            <h3 class="font-semibold text-xl mb-1">{{ category.name }}</h3>
-            <p class="text-gray-600 mb-3 line-clamp-3">{{ category.description|truncatechars:100 }}</p>
-            <a href="{% url 'product_list_by_category' category.slug %}" class="inline-block bg-gray-100 text-purple-700 py-2 px-6 rounded-full font-semibold hover:bg-purple-700 hover:text-white transition">Browse {{ category.name }}</a>
-        </div>
-        {% empty %}
-        <div class="col-span-full text-center text-gray-500">No categories available at the moment.</div>
-        {% endfor %}
-    </div>
-</section>
+
 {% endblock %}
