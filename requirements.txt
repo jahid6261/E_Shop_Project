@@ -17,3 +17,4 @@ sslcommerz-lib==1.0
 tzdata==2025.3
 urllib3==2.6.2
 wheel==0.45.1
+whitenoise==6.11.0
