@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator,MaxValueValidator
-
+from cloudinary.models import CloudinaryField
 # Create your models here.
 
 
@@ -31,7 +31,6 @@ class Product(models.Model):
     available= models.BooleanField(default=True)
     created_at=models.DateTimeField(auto_now_add=True)
     updated_at=models.DateTimeField(auto_now=True)
-    image=models.ImageField(upload_to='products/%Y/%M/%D')
     
     def __str__(self):
         return self.name
@@ -42,6 +41,17 @@ class Product(models.Model):
         ratings= self.ratings.all()
         if ratings.count() > 0:
             return sum([i.ratting for i in ratings ])/ratings.count()
+        
+
+class ProductImage(models.Model):
+    
+    product=models.ForeignKey(Product,on_delete=models.CASCADE,related_name='images')
+    image = CloudinaryField('image')
+    
+    
+    def __str__(self):
+        return f"Image of {self.product.name}"
+            
 class Rating(models.Model):
     product=models.ForeignKey(Product,on_delete=models.CASCADE,
     related_name='ratings')   
