@@ -29,13 +29,15 @@
                 <div class="flex items-center px-6 py-4 gap-4">
 
                     <!-- Image -->
-                    <div class="w-20 h-20 rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center">
-                        {% if item.product.image %}
-                        <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" class="w-full h-full object-cover">
-                        {% else %}
-                        <i class="fas fa-image text-gray-400 text-2xl"></i>
-                        {% endif %}
-                    </div>
+                 <div class="w-20 h-20 rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center">
+    {% if item.product.images.exists %}
+        {% with img=item.product.images.first %}
+            <img src="{{ img.image.url }}" alt="{{ item.product.name }}" class="w-full h-full object-cover">
+        {% endwith %}
+    {% else %}
+        <i class="fas fa-image text-gray-400 text-2xl"></i>
+    {% endif %}
+</div>
 
                     <!-- Info -->
                     <div class="flex-1">

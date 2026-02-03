@@ -20,16 +20,17 @@
 <!-- Product Section -->
 <div class="grid grid-cols-1 md:grid-cols-5 gap-8">
     <!-- Product Image -->
-    <div class="md:col-span-2">
-        {% if product.image %}
-        <img src="{{ product.image.url }}" alt="{{ product.name }}" class="w-full rounded-lg shadow-md object-cover">
-        {% else %}
+  <div class="md:col-span-2 space-y-2">
+    {% if product.images.all %}
+        {% for img in product.images.all %}
+            <img src="{{ img.image.url }}" alt="{{ product.name }}" class="w-full rounded-lg shadow-md object-cover">
+        {% endfor %}
+    {% else %}
         <div class="bg-gray-100 flex items-center justify-center h-80 rounded-lg">
             <i class="fas fa-image text-gray-400 text-5xl"></i>
         </div>
-        {% endif %}
-    </div>
-
+    {% endif %}
+</div>
     <!-- Product Details -->
     <div class="md:col-span-3 space-y-4">
         <h1 class="text-3xl font-bold text-gray-800">{{ product.name }}</h1>
