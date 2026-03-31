@@ -3,6 +3,7 @@ import json
 from django.conf import settings
 from django.template.loader import render_to_string
 from django.core.mail import EmailMultiAlternatives
+from django.urls import reverse
 
 def generate_sslcommerz_payment(request,order):
     post_data = {
@@ -11,9 +12,9 @@ def generate_sslcommerz_payment(request,order):
         'total_amount': float(order.get_total_cost()),
         'currency': 'BDT',
         'tran_id': str(order.id),
-        'success_url': request.build_absolute_uri(f'/payment/success/{order.id}/'),
-        'fail_url': request.build_absolute_uri(f'/payment/fail/{order.id}/'),
-        'cancel_url': request.build_absolute_uri(f'/payment/cancel/{order.id}/'),
+       'success_url': request.build_absolute_uri(reverse('payment_success', args=[order.id])),
+       'fail_url': request.build_absolute_uri(reverse('payment_fail', args=[order.id])),
+       'cancel_url': request.build_absolute_uri(reverse('payment_cancel', args=[order.id])),
         'cus_name': f"{order.first_name} {order.last_name}",
         'cus_email': order.email,
         'cus_phone': order.phone,
