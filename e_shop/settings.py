@@ -178,7 +178,7 @@ cloudinary.config(
 # Login_URL
 
 LOGIN_URL = '/users/login/'   
-LOGIN_REDIRECT_URL = '/home/' 
+LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 
 
